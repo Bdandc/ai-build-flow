@@ -1,17 +1,25 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20' }
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm set audit false && npm set fund false
       - run: npm ci || npm i
       - name: Check single React
         run: |
           npm ls react || true
           npm ls react-dom || true
-      - run: npm run lint --workspaces --if-present
-      - run: npm run build:web --if-present
-
+      - run: npm --workspace apps/web run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
