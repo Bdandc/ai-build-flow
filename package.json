@@ -3,12 +3,22 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "workspaces": ["apps/*","packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev:web": "npm --workspace apps/web run dev",
     "dev:mobile": "npm --workspace apps/mobile run start",
     "build:web": "npm --workspace apps/web run build",
     "start:web": "npm --workspace apps/web run start",
-    "test": "echo \"no tests\" && exit 0"
+    "test": "echo \"no tests\" && exit 0",
+    "lint": "eslint . --ext .ts,.tsx || true",
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "eslint": "^9.10.0",
+    "eslint-config-next": "14.2.5",
+    "prettier": "^3.3.3"
   }
 }
