@@ -9,9 +9,13 @@
     "start": "next start -p 3000"
   },
   "dependencies": {
+    "@ai-build-flow/ui": "file:../../packages/ui",
     "next": "14.2.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "@ai-build-flow/ui": "workspace:*"
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.24",
+    "typescript": "5.9.2"
   }
 }
