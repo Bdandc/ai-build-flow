@@ -11,13 +11,13 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier -w ."
   },
-  "engines": {
-    "node": ">=20 <21",
-    "npm": ">=10 <11"
-  },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
     "prettier": "^3.3.3"
+  },
+  "overrides": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }

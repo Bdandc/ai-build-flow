@@ -4,17 +4,8 @@
   "type": "module",
   "main": "src/index.ts",
   "exports": { ".": "./src/index.ts" },
-  "scripts": {
-    "test": "jest"
-  },
   "peerDependencies": {
     "react": "18.2.0",
     "react-dom": "18.2.0"
-  },
-  "devDependencies": {
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.12",
-    "ts-jest": "^29.2.5",
-    "@testing-library/react": "^14.3.1"
   }
 }
