@@ -12,6 +12,8 @@
     "dev:mobile": "npm --workspace apps/mobile run start",
     "build:web": "npm --workspace apps/web run build",
     "start:web": "npm --workspace apps/web run start",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx || true",
+    "format": "prettier -w .",
     "test": "echo \"no tests\" && exit 0"
   },
   "devDependencies": {
