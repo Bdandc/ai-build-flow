@@ -9,20 +9,14 @@
   ],
   "scripts": {
     "dev:web": "npm --workspace apps/web run dev",
-    "dev:mobile": "npm --workspace apps/mobile run start",
     "build:web": "npm --workspace apps/web run build",
     "start:web": "npm --workspace apps/web run start",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx || true",
-    "format": "prettier -w .",
-    "test": "echo \"no tests\" && exit 0"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier -w ."
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
     "prettier": "^3.3.3"
-  },
-  "dependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
   }
 }
