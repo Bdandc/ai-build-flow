@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "./.next" },
+  "include": ["next-env.d.ts","**/*.ts","**/*.tsx"]
+}

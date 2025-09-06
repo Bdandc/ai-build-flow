@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "AI Build Flow",
+    "slug": "ai-build-flow",
+    "scheme": "aibuildflow",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "sdkVersion": "51.0.0"
+  }
+}
