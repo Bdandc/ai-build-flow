@@ -1,17 +1,18 @@
 # AI Build Flow
 
-## Deployment
+## Deploying to Vercel
 
-1. **Link the repository to Vercel**
-   - Using the Vercel CLI: run `npx vercel link` from the repo root and select the `apps/web` directory when prompted.
-   - Or connect the GitHub repository to a new Vercel project with root directory `apps/web`.
-2. **Set environment variables**
-   - In the Vercel dashboard or via the CLI, add any required variables with `vercel env add`.
-   - Add a `VERCEL_TOKEN` secret to the GitHub repository for CI builds.
-3. **Local production build**
-   - Run `npx vercel build --cwd apps/web` to verify the build locally.
+The web app lives in `apps/web`.
 
+**Vercel settings:**
+- Root Directory: `apps/web`
+- Framework Preset: Next.js
+- Build Command: `npm run build`
+- Install Command: `npm ci`
 
-### Vercel deploy
-
-The root-level `vercel.json` installs dependencies at the repo root, then installs and builds the app in `apps/web`. With this config, Vercel can deploy from any branch without setting a custom Root Directory, though pointing a project directly at `apps/web` still works.
+**Local build:**
+```bash
+npm --workspace apps/web install
+npm --workspace apps/web run build
+npm --workspace apps/web start
+```
