@@ -1,5 +1,4 @@
-export const dynamic = "force-dynamic";
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
     <main style={{ padding: 24 }}>
       <h1>404 – Not Found</h1>
