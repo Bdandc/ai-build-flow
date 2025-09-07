@@ -11,6 +11,9 @@
     "dev:web": "npm --workspace apps/web run dev",
     "build:web": "npm --workspace apps/web run build",
     "start:web": "npm --workspace apps/web run start",
+    "build": "npm --workspace apps/web run build",
+    "vercel-build": "npm --workspace apps/web run build",
+    "postinstall": "echo skip-postinstall",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier -w ."
   },
