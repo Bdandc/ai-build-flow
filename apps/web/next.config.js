@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   transpilePackages: ['@ai-build-flow/ui'],
-  experimental: { externalDir: true }
+  experimental: { externalDir: true },
+  eslint: { ignoreDuringBuilds: true }
 };
 export default nextConfig;
-

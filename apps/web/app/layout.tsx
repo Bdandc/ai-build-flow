@@ -1,4 +1,14 @@
-export const metadata = { title: "AI Build Flow – Web" };
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body style={{ fontFamily:"ui-sans-serif, system-ui" }}>{children}</body></html>;
+import type { ReactNode } from "react";
+
+export const metadata = {
+  title: "AI Build Flow",
+  description: "Web app",
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
 }
