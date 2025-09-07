@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,10 +18,9 @@ jobs:
           cache: npm
       - run: npm set audit false && npm set fund false
       - run: npm ci || npm i
+      - run: npm dedupe
       - name: Check single React
         run: |
           npm ls react || true
           npm ls react-dom || true
       - run: npm --workspace apps/web run build
-        env:
-          NEXT_TELEMETRY_DISABLED: 1

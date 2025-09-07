@@ -1,9 +1,7 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+export default {
   reactStrictMode: true,
-  output: 'standalone',
-  transpilePackages: ['@ai-build-flow/ui'],
+  output: "standalone",
+  transpilePackages: ["@ai-build-flow/ui"],
   experimental: { externalDir: true },
   eslint: { ignoreDuringBuilds: true }
 };
-export default nextConfig;
