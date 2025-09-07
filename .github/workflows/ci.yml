@@ -23,3 +23,18 @@ jobs:
       - run: npm --workspace apps/web run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+
+  vercel:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm set audit false && npm set fund false
+      - run: npm ci || npm i
+      - run: npx vercel build --cwd apps/web --prod --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
