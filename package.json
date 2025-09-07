@@ -14,13 +14,14 @@
     "build": "npm --workspace apps/web run build",
     "vercel-build": "npm --workspace apps/web run build",
     "postinstall": "echo skip-postinstall",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "npm --workspace apps/web run lint",
     "format": "prettier -w ."
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "next": "14.2.5"
   },
   "overrides": {
     "react": "18.2.0",
