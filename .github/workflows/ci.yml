@@ -25,7 +25,8 @@ jobs:
           npm ls react || true
           npm ls react-dom || true
       - name: Build web
-        run: npm --workspace apps/web run build
+        working-directory: apps/web
+        run: npm run build
 
   vercel:
     needs: build
@@ -44,6 +45,8 @@ jobs:
       - run: npm ci || npm i
       # Build-only validation; uncomment the deploy step if you want to deploy
       - name: Vercel build (apps/web)
-        run: npx vercel build --cwd apps/web --prod --token "$VERCEL_TOKEN"
+        working-directory: apps/web
+        run: npx vercel build --prod --token "$VERCEL_TOKEN"
       # - name: Vercel deploy (prebuilt)
-      #   run: npx vercel deploy --prebuilt --cwd apps/web --prod --token "$VERCEL_TOKEN"
+      #   working-directory: apps/web
+      #   run: npx vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
