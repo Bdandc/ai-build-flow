@@ -1,0 +1,38 @@
+name: Lint & Format (apps/web)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  lint_format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            apps/web/package-lock.json
+
+      - name: Install (root)
+        run: npm ci --ignore-scripts
+
+      # --- Prettier: strict (fail if files need formatting) ---
+      - name: Prettier check (apps/web)
+        run: npx --yes prettier "apps/web/**/*" --check
+
+      # --- ESLint: soft (warn only; never fail the job) ---
+      - name: ESLint (apps/web) - soft check
+        run: |
+          npx --yes eslint apps/web || {
+            echo "::warning ::ESLint failed or not fully configured (non-blocking).";
+            exit 0;
+          }

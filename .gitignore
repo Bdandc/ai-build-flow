@@ -1,6 +1,9 @@
 node_modules
 dist
 build
+.next/
+apps/web/.next/
+.vercel/
 .expo
 .expo-shared
 .DS_Store

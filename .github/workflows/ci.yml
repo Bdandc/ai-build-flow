@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches: ["main"]
@@ -8,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,10 +19,34 @@ jobs:
           cache: npm
       - run: npm set audit false && npm set fund false
       - run: npm ci || npm i
+      - run: npm dedupe
       - name: Check single React
         run: |
           npm ls react || true
           npm ls react-dom || true
-      - run: npm --workspace apps/web run build
-        env:
-          NEXT_TELEMETRY_DISABLED: 1
+      - name: Build web
+        working-directory: apps/web
+        run: npm run build
+
+  vercel:
+    needs: build
+    # Only run if you’ve added Vercel token in repo secrets
+    if: ${{ secrets.VERCEL_TOKEN != '' }}
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci || npm i
+      # Build-only validation; uncomment the deploy step if you want to deploy
+      - name: Vercel build (apps/web)
+        working-directory: apps/web
+        run: npx vercel build --prod --token "$VERCEL_TOKEN"
+      # - name: Vercel deploy (prebuilt)
+      #   working-directory: apps/web
+      #   run: npx vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"

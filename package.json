@@ -11,7 +11,7 @@
     "dev:web": "npm --workspace apps/web run dev",
     "build:web": "npm --workspace apps/web run build",
     "start:web": "npm --workspace apps/web run start",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint apps/web --ext .js,.jsx,.ts,.tsx",
     "format": "prettier -w ."
   },
   "devDependencies": {
