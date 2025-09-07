@@ -8,3 +8,7 @@ apps/web/.next/
 .expo-shared
 .DS_Store
 .env
+.next/
+out/
+node_modules/
+npm-debug.log*
