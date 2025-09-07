@@ -11,3 +11,7 @@
 3. **Local production build**
    - Run `npx vercel build --cwd apps/web` to verify the build locally.
 
+
+### Vercel deploy
+
+The root-level `vercel.json` installs dependencies at the repo root, then installs and builds the app in `apps/web`. With this config, Vercel can deploy from any branch without setting a custom Root Directory, though pointing a project directly at `apps/web` still works.
