@@ -11,14 +11,13 @@
     "dev:web": "npm --workspace apps/web run dev",
     "build:web": "npm --workspace apps/web run build",
     "start:web": "npm --workspace apps/web run start",
-    "lint": "npm --workspace apps/web run lint",
+    "lint": "eslint apps/web --ext .js,.jsx,.ts,.tsx",
     "format": "prettier -w ."
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
-    "prettier": "^3.3.3",
-    "next": "14.2.5"
+    "prettier": "^3.3.3"
   },
   "overrides": {
     "react": "18.2.0",

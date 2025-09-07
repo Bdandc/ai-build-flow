@@ -1,19 +1,4 @@
 {
   "root": true,
-  "extends": ["next/core-web-vitals"],
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2022,
-    "project": false
-  },
-  "rules": {
-    // keep it friendly while we iterate
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
-    ]
-  },
-  "ignorePatterns": [".next", "node_modules", "dist", "build"]
+  "extends": ["next", "next/core-web-vitals"]
 }
