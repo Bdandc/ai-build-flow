@@ -16,3 +16,8 @@ npm --workspace apps/web install
 npm --workspace apps/web run build
 npm --workspace apps/web start
 ```
+
+**Development:**
+```bash
+npm run dev:web
+```
