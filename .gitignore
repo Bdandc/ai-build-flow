@@ -3,6 +3,7 @@ dist
 build
 .next/
 apps/web/.next/
+apps/web/package-lock.json
 .vercel/
 .expo
 .expo-shared
