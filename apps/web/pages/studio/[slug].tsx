@@ -1,11 +1,20 @@
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 
 // Block model
 export type Block =
   | { type: "hero"; title: string; subtitle?: string }
   | { type: "stats"; items: { label: string; value: string }[] }
   | { type: "table"; columns: string[]; rows?: string[][] };
+
+const isBlock = (x: any): x is Block => {
+  return (
+    x &&
+    typeof x === "object" &&
+    "type" in x &&
+    (x.type === "hero" || x.type === "stats" || x.type === "table")
+  );
+};
 
 type ProjectMeta = {
   slug: string;
@@ -22,7 +31,11 @@ function loadProject(slug: string): { prompt: string; blocks: Block[] } | null {
   const raw = localStorage.getItem(projectKey(slug));
   if (!raw) return null;
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    const blocks = Array.isArray(parsed?.blocks)
+      ? (parsed.blocks.filter(isBlock) as Block[])
+      : [];
+    return { prompt: parsed.prompt, blocks };
   } catch {
     return null;
   }
@@ -36,9 +49,9 @@ function saveProject(
   localStorage.setItem(projectKey(slug), JSON.stringify(data));
 }
 
-function initDefaultBlocks(prompt: string): Block[] {
-  return [{ type: "hero", title: prompt }];
-}
+const defaultBlocks = (prompt: string): Block[] => [
+  { type: "hero", title: prompt || "My first project" },
+];
 
 function getProjectMeta(slug: string | string[] | undefined): ProjectMeta | null {
   if (!slug || typeof window === "undefined") return null;
@@ -64,7 +77,7 @@ export function parseCommand(
     return {
       type: "ok",
       message: "Added hero",
-      apply: (prev) => [...prev, { type: "hero", title }],
+      apply: (prev: Block[]) => [...prev, { type: "hero", title }],
     };
   }
 
@@ -80,7 +93,7 @@ export function parseCommand(
     return {
       type: "ok",
       message: "Added stats",
-      apply: (prev) => [...prev, { type: "stats", items }],
+      apply: (prev: Block[]) => [...prev, { type: "stats", items }],
     };
   }
 
@@ -92,7 +105,7 @@ export function parseCommand(
     return {
       type: "ok",
       message: "Added table",
-      apply: (prev) => [...prev, { type: "table", columns }],
+      apply: (prev: Block[]) => [...prev, { type: "table", columns }],
     };
   }
 
@@ -101,7 +114,7 @@ export function parseCommand(
     return {
       type: "ok",
       message: `Removed ${m[1]}`,
-      apply: (prev) => {
+      apply: (prev: Block[]) => {
         if (idx < 0 || idx >= prev.length) return prev;
         const next = [...prev];
         next.splice(idx, 1);
@@ -111,7 +124,7 @@ export function parseCommand(
   }
 
   if (/^clear$/i.test(text)) {
-    return { type: "ok", message: "Cleared", apply: () => [] };
+    return { type: "ok", message: "Cleared", apply: () => [] as Block[] };
   }
 
   return {
@@ -203,11 +216,25 @@ export default function StudioPage() {
   const router = useRouter();
   const { slug } = router.query;
 
-  const [meta, setMeta] = useState<ProjectMeta | null>(null);
-  const [prompt, setPrompt] = useState<string>("");
-  const [blocks, setBlocks] = useState<Block[]>([]);
-  const [feedback, setFeedback] = useState<string>("");
-  const [isBusy, setIsBusy] = useState(false);
+  const [meta, setMeta] = React.useState<ProjectMeta | null>(null);
+  const [prompt, setPrompt] = React.useState<string>("");
+  const [blocks, setBlocks] = React.useState<Block[]>(() => {
+    const key = `ai_build_flow_project_${slug ?? ""}`;
+    try {
+      const raw =
+        typeof window !== "undefined" ? localStorage.getItem(key) : null;
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      const loaded = Array.isArray(parsed?.blocks)
+        ? parsed.blocks.filter(isBlock)
+        : [];
+      return loaded as Block[];
+    } catch {
+      return [];
+    }
+  });
+  const [feedback, setFeedback] = React.useState<string>("");
+  const [isBusy, setIsBusy] = React.useState(false);
 
   // initial load
   useEffect(() => {
@@ -218,14 +245,14 @@ export default function StudioPage() {
     const stored = loadProject(slug);
     if (stored) {
       setPrompt(stored.prompt || "My first project");
-      setBlocks(stored.blocks || []);
+      setBlocks(stored.blocks);
       return;
     }
 
     const initialPrompt =
       (router.query.prompt as string) || metaProj?.prompt || "My first project";
     setPrompt(initialPrompt);
-    const initBlocks = initDefaultBlocks(initialPrompt);
+    const initBlocks = defaultBlocks(initialPrompt);
     setBlocks(initBlocks);
     saveProject(slug, { prompt: initialPrompt, blocks: initBlocks });
   }, [slug, router.query.prompt]);
@@ -244,19 +271,30 @@ export default function StudioPage() {
     setIsBusy(true);
     const result = parseCommand(text);
     if (result.type === "ok" && result.apply) {
-      setBlocks((prev) => result.apply!(prev));
+      setBlocks((prev: Block[]) => {
+        const next = result.apply!(prev);
+        return next;
+      });
     }
     setFeedback(result.message);
     setTimeout(() => setFeedback(""), 2000);
     setIsBusy(false);
   }
 
-  function summary(b: Block): string {
-    if (b.type === "hero") return `hero — ${b.title}`;
-    if (b.type === "stats") return `stats — ${b.items.length} items`;
-    if (b.type === "table") return `table — ${b.columns.length} cols`;
-    return b.type;
-  }
+  const summarizeBlock = (b: Block): string => {
+    switch (b.type) {
+      case "hero":
+        return b.title ? `hero — ${b.title}` : "hero";
+      case "stats":
+        return `stats — ${b.items?.length ?? 0} items`;
+      case "table":
+        return `table — ${b.columns?.length ?? 0} cols`;
+      default: {
+        const _exhaustive: never = b;
+        return "block";
+      }
+    }
+  };
 
   if (!slug || (meta === null && !prompt)) {
     return (
@@ -299,7 +337,7 @@ export default function StudioPage() {
             <div style={{ opacity: 0.6, fontSize: 12 }}>Studio</div>
           </div>
           <button
-            onClick={() => setBlocks(initDefaultBlocks(prompt))}
+            onClick={() => setBlocks(defaultBlocks(prompt))}
             style={{
               background: "transparent",
               border: "none",
@@ -323,7 +361,7 @@ export default function StudioPage() {
             gap: 6,
           }}
         >
-          {blocks.map((b, i) => (
+          {blocks.map((b: Block, i: number) => (
             <li
               key={i}
               style={{
@@ -344,11 +382,13 @@ export default function StudioPage() {
                   whiteSpace: "nowrap",
                 }}
               >
-                {i + 1}. {summary(b)}
+                {i + 1}. {summarizeBlock(b)}
               </span>
               <button
                 onClick={() =>
-                  setBlocks((prev) => prev.filter((_, idx) => idx !== i))
+                  setBlocks((prev: Block[]) =>
+                    prev.filter((_, idx) => idx !== i)
+                  )
                 }
                 style={{
                   background: "transparent",
@@ -408,7 +448,7 @@ function Composer({
   disabled?: boolean;
   placeholder: string;
 }) {
-  const [val, setVal] = useState("");
+  const [val, setVal] = React.useState("");
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
