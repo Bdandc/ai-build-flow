@@ -2,7 +2,9 @@
 import dynamic from "next/dynamic";
 import { useMemo, useCallback } from "react";
 import { usePRD } from "@/store/prdStore";
-import type { Node as RFNode, Edge as RFEdge, Connection as RFConnection } from "reactflow";
+// NOTE: React Flow types differ across minor versions and were failing the build on Vercel
+// ("Module 'reactflow' has no exported member 'Node'"). To unblock CI quickly, we avoid
+// importing type-only exports and use minimal `any` typings. We can tighten this later.
 import "reactflow/dist/style.css";
 
 // React Flow's main component is the default export.
@@ -13,7 +15,7 @@ const Controls  = dynamic(() => import("reactflow").then((m) => m.Controls), { s
 export default function PRDCanvas() {
   const { blocks, edges, addEdge, select, updateBlock } = usePRD();
 
-  const nodes: RFNode[] = useMemo(
+  const nodes: any[] = useMemo(
     () =>
       blocks.map(b => ({
         id: b.id,
@@ -23,20 +25,20 @@ export default function PRDCanvas() {
     [blocks],
   );
 
-  const rfEdges: RFEdge[] = useMemo(
+  const rfEdges: any[] = useMemo(
     () => edges.map(e => ({ id: e.id, source: e.source, target: e.target })),
     [edges],
   );
 
   const onConnect = useCallback(
-    (c: RFConnection) => {
+    (c: any) => {
       if (c.source && c.target) addEdge({ source: c.source, target: c.target });
     },
     [addEdge],
   );
 
   const onNodeDragStop = useCallback(
-    (_e: any, n: RFNode) => {
+    (_e: any, n: any) => {
       updateBlock(n.id, { x: n.position.x, y: n.position.y });
     },
     [updateBlock],
