@@ -9,8 +9,9 @@ import "reactflow/dist/style.css";
 
 // React Flow's main component is the default export.
 const ReactFlow = dynamic(() => import("reactflow").then((m) => m.default), { ssr: false });
-const MiniMap   = dynamic(() => import("reactflow").then((m) => m.MiniMap), { ssr: false });
-const Controls  = dynamic(() => import("reactflow").then((m) => m.Controls), { ssr: false });
+// Import MiniMap and Controls from their sub-packages to avoid named-export mismatches.
+const MiniMap  = dynamic(() => import("@reactflow/minimap").then((m) => m.MiniMap),   { ssr: false });
+const Controls = dynamic(() => import("@reactflow/controls").then((m) => m.Controls), { ssr: false });
 
 export default function PRDCanvas() {
   const { blocks, edges, addEdge, select, updateBlock } = usePRD();
