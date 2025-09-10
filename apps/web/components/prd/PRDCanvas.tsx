@@ -24,7 +24,7 @@ type RFConnection = {
 };
 import "reactflow/dist/style.css";
 
-// React Flow exports its main component as the *default* export.
+// React Flow's main component is the default export.
 const ReactFlow = dynamic(() => import("reactflow").then((m) => m.default), {
   ssr: false,
 });
