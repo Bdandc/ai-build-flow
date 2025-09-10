@@ -2,12 +2,26 @@
 import dynamic from "next/dynamic";
 import { useMemo, useCallback } from "react";
 import { usePRD } from "@/store/prdStore";
-// React Flow v11: import types from the top-level "reactflow" package.
-import type {
-  Node as RFNode,
-  Edge as RFEdge,
-  Connection as RFConnection,
-} from "reactflow";
+// ==== Local minimal typings to avoid CI flakiness with React Flow TS exports ====
+// We only need a tiny subset for compile-time safety. These mirror React Flow's shape well
+// enough for our current usage and can be replaced with library types later.
+type RFNode = {
+  id: string;
+  type?: string;
+  position: { x: number; y: number };
+  data?: any;
+};
+type RFEdge = {
+  id: string;
+  source: string;
+  target: string;
+  type?: string;
+  data?: any;
+};
+type RFConnection = {
+  source?: string;
+  target?: string;
+};
 import "reactflow/dist/style.css";
 
 // Ensure ReactFlow component is dynamically loaded from the default export.
