@@ -24,8 +24,8 @@ type RFConnection = {
 };
 import "reactflow/dist/style.css";
 
-// Ensure ReactFlow component is dynamically loaded from the default export.
-const ReactFlow = dynamic(() => import("reactflow").then((m) => m.ReactFlow), {
+// React Flow exports its main component as the *default* export.
+const ReactFlow = dynamic(() => import("reactflow").then((m) => m.default), {
   ssr: false,
 });
 const MiniMap = dynamic(() => import("reactflow").then(m => m.MiniMap), {
