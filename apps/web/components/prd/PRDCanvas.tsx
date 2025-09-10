@@ -2,13 +2,16 @@
 import dynamic from "next/dynamic";
 import { useMemo, useCallback } from "react";
 import { usePRD } from "@/store/prdStore";
+// React Flow v11: type exports live under @reactflow/core;
+// the component default export comes from "reactflow".
 import type {
   Node as RFNode,
   Edge as RFEdge,
   Connection as RFConnection,
-} from "reactflow";
+} from "@reactflow/core";
 import "reactflow/dist/style.css";
 
+// Ensure ReactFlow component is dynamically loaded from the default export.
 const ReactFlow = dynamic(() => import("reactflow").then(m => m.default), {
   ssr: false,
 });
