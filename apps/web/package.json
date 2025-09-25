@@ -15,6 +15,8 @@
     "reactflow": "11.11.4",
     "@reactflow/minimap": "11.7.14",
     "@reactflow/controls": "11.2.14",
-    "zustand": "4.5.7"
+    "zustand": "4.5.7",
+    "uuid": "9.0.1",
+    "marked": "12.0.2"
   }
 }
