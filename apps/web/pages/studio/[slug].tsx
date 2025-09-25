@@ -298,90 +298,35 @@ export default function StudioPage() {
 
   if (!slug || (meta === null && !prompt)) {
     return (
-      <main style={{ padding: 24 }}>
-        <p style={{ opacity: 0.7 }}>Project not found.</p>
+      <main className="p-6">
+        <p className="opacity-70">Project not found.</p>
       </main>
     );
   }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        gridTemplateColumns: "minmax(260px, 380px) 1fr",
-      }}
-    >
-      <section
-        style={{
-          borderRight: "1px solid #1f2024",
-          background: "#0e0f10",
-          padding: 12,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <header
-          style={{
-            padding: 10,
-            border: "1px solid #1f2024",
-            borderRadius: 10,
-            marginBottom: 10,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+    <main className="grid min-h-screen grid-cols-[minmax(260px,380px)_1fr]">
+      <section className="flex flex-col border-r border-[#1f2024] bg-[#0e0f10] p-3">
+        <header className="mb-[10px] flex items-center justify-between rounded-[10px] border border-[#1f2024] p-[10px]">
           <div>
-            <div style={{ fontWeight: 800 }}>{meta?.name || "Project"}</div>
-            <div style={{ opacity: 0.6, fontSize: 12 }}>Studio</div>
+            <div className="font-extrabold">{meta?.name || "Project"}</div>
+            <div className="text-xs opacity-60">Studio</div>
           </div>
           <button
             onClick={() => setBlocks(defaultBlocks(prompt))}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "#f87171",
-              cursor: "pointer",
-              fontSize: 12,
-            }}
+            className="cursor-pointer border-0 bg-transparent text-xs text-rose-400"
           >
             Reset
           </button>
         </header>
 
-        <ul
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            display: "grid",
-            gap: 6,
-          }}
-        >
+        <ul className="grid m-0 flex-1 list-none gap-1.5 overflow-y-auto p-0">
           {blocks.map((b: Block, i: number) => (
             <li
               key={i}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                background: "#121316",
-                border: "1px solid #1f2024",
-                borderRadius: 8,
-                padding: "8px 10px",
-                fontSize: 14,
-              }}
+              className="flex items-center justify-between rounded-lg border border-[#1f2024] bg-[#121316] px-[10px] py-2 text-sm"
             >
-              <span
-                style={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                 {i + 1}. {summarizeBlock(b)}
               </span>
               <button
@@ -390,13 +335,7 @@ export default function StudioPage() {
                     prev.filter((_, idx) => idx !== i)
                   )
                 }
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#9aa0a6",
-                  cursor: "pointer",
-                  marginLeft: 8,
-                }}
+                className="ml-2 cursor-pointer border-0 bg-transparent text-[#9aa0a6]"
                 aria-label={`remove ${i + 1}`}
               >
                 ×
@@ -406,7 +345,7 @@ export default function StudioPage() {
         </ul>
 
         {feedback && (
-          <div style={{ fontSize: 12, opacity: 0.7, marginTop: 8 }}>
+          <div className="mt-2 text-xs opacity-70">
             {feedback}
           </div>
         )}
@@ -417,20 +356,11 @@ export default function StudioPage() {
           placeholder='Tell me what to add (e.g. "add stats Revenue: $1.2M; Users: 42k")'
         />
       </section>
-
-      <section style={{ background: "#0b0c0e", padding: 12 }}>
-        <div
-          style={{
-            border: "1px solid #1f2024",
-            borderRadius: 12,
-            overflow: "hidden",
-            height: "calc(100vh - 24px)",
-            background: "black",
-          }}
-        >
+      <section className="bg-[#0b0c0e] p-3">
+        <div className="h-[calc(100vh-24px)] overflow-hidden rounded-xl border border-[#1f2024] bg-black">
           <iframe
             title="preview"
-            style={{ width: "100%", height: "100%", border: "none" }}
+            className="h-full w-full border-0"
             srcDoc={doc}
           />
         </div>
@@ -459,41 +389,23 @@ function Composer({
   }
 
   return (
-    <form
-      onSubmit={submit}
-      style={{ display: "flex", gap: 8, marginTop: 8 }}
-    >
+    <form onSubmit={submit} className="mt-2 flex gap-2">
       <input
         value={val}
         onChange={(e) => setVal(e.target.value)}
         disabled={disabled}
         placeholder={placeholder}
-        style={{
-          flex: 1,
-          border: "1px solid #1f2024",
-          background: "#0f1013",
-          color: "white",
-          borderRadius: 8,
-          padding: "10px 12px",
-          outline: "none",
-        }}
+        className="flex-1 rounded-lg border border-[#1f2024] bg-[#0f1013] px-3 py-[10px] text-white outline-none"
       />
       <button
-          type="submit"
-          disabled={disabled || !val.trim()}
-          style={{
-            background: "#7c3aed",
-            color: "white",
-            border: "none",
-            padding: "10px 12px",
-            borderRadius: 8,
-            fontWeight: 700,
-            cursor: disabled || !val.trim() ? "not-allowed" : "pointer",
-            opacity: disabled || !val.trim() ? 0.6 : 1,
-          }}
+        type="submit"
+        disabled={disabled || !val.trim()}
+        className={`rounded-lg border-0 bg-violet-600 px-3 py-[10px] font-bold text-white ${
+          disabled || !val.trim() ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+        }`}
         >
           Send
-        </button>
+      </button>
     </form>
   );
 }

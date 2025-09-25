@@ -30,7 +30,7 @@ export default function StudioPage() {
   return (
     <>
       <Head><title>PRD Studio</title></Head>
-      <div style={{ padding: 16, display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, height: "calc(100vh - 32px)" }}>
+      <div className="grid h-[calc(100vh-32px)] grid-cols-[2fr_1fr] gap-4 p-4">
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <button onClick={() => addBlock()} className="border rounded px-3 py-1">+ Add Node</button>
@@ -41,7 +41,7 @@ export default function StudioPage() {
             </label>
             <button onClick={exportPRD} className="border rounded px-3 py-1">Export PRD.md</button>
           </div>
-          <div style={{ flex: 1, minHeight: 0 }}>
+          <div className="flex-1 min-h-0">
             <PRDCanvas />
           </div>
         </div>
