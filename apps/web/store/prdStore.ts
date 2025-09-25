@@ -1,6 +1,6 @@
 "use client";
 import { create } from "zustand";
-import { v4 as uuid } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { PRDBlock, PRDEdge, PRDGraph } from "@/types/prd";
 
 interface PRDState extends PRDGraph {
@@ -22,7 +22,7 @@ export const usePRD = create<PRDState>((set, get) => ({
   select: (id) => set({ selectedId: id }),
   addBlock: (partial = {}) => {
     const b: PRDBlock = {
-      id: uuid(),
+      id: uuidv4(),
       title: partial.title ?? "New Feature",
       kind: partial.kind ?? "feature",
       description: partial.description ?? "",
@@ -41,7 +41,7 @@ export const usePRD = create<PRDState>((set, get) => ({
       selectedId: s.selectedId === id ? undefined : s.selectedId
     })),
   addEdge: (edge) => {
-    const e: PRDEdge = { id: uuid(), ...edge };
+    const e: PRDEdge = { id: uuidv4(), ...edge };
     set(s => ({ edges: [...s.edges, e] }));
     return e;
   },
