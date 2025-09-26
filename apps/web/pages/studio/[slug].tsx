@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useMemo } from 'react';
 
+import { Button } from '@/components/ui/button';
+
 // Block model
 export type Block =
   | { type: 'hero'; title: string; subtitle?: string }
@@ -278,51 +280,59 @@ export default function StudioPage() {
 
   if (!slug || (meta === null && !prompt)) {
     return (
-      <main className="p-6">
-        <p className="opacity-70">Project not found.</p>
+      <main className="min-h-screen bg-background px-6 py-24 text-center text-muted-foreground">
+        <p className="text-sm">Project not found.</p>
       </main>
     );
   }
 
   return (
-    <main className="grid min-h-screen grid-cols-[minmax(260px,380px)_1fr]">
-      <section className="flex flex-col border-r border-[#1f2024] bg-[#0e0f10] p-3">
-        <header className="mb-2.5 flex items-center justify-between rounded-[10px] border border-[#1f2024] p-[10px]">
+    <main className="grid min-h-screen bg-background text-foreground lg:grid-cols-[minmax(260px,360px)_1fr]">
+      <section className="flex flex-col gap-4 border-border/60 bg-card/30 px-6 py-6 backdrop-blur lg:border-r">
+        <header className="flex items-center justify-between rounded-lg border border-border/60 bg-card/80 px-4 py-3">
           <div>
-            <div className="font-extrabold">{meta?.name || 'Project'}</div>
-            <div className="text-xs opacity-60">Studio</div>
+            <div className="text-sm font-semibold text-muted-foreground">Studio</div>
+            <div className="text-lg font-bold text-foreground">{meta?.name || 'Project'}</div>
           </div>
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
+            disabled={!blocks.length}
             onClick={() => setBlocks(defaultBlocks(prompt))}
-            className="cursor-pointer border-0 bg-transparent p-0 text-xs font-medium text-rose-400 transition-opacity hover:opacity-80"
+            className="h-8 px-3 text-xs font-medium"
           >
             Reset
-          </button>
+          </Button>
         </header>
 
-        <ul className="m-0 grid flex-1 list-none gap-1.5 overflow-y-auto p-0">
+        <ul className="flex-1 space-y-2 overflow-y-auto rounded-lg border border-border/60 bg-card/50 p-3">
           {blocks.map((b: Block, i: number) => (
             <li
               key={i}
-              className="flex items-center justify-between rounded-lg border border-[#1f2024] bg-[#121316] px-[10px] py-2 text-sm"
+              className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-background/60 px-3 py-2 text-sm"
             >
-              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+              <span className="truncate text-muted-foreground">
                 {i + 1}. {summarizeBlock(b)}
               </span>
               <button
                 type="button"
                 onClick={() => setBlocks((prev: Block[]) => prev.filter((_, idx) => idx !== i))}
-                className="ml-2 cursor-pointer border-0 bg-transparent p-0 text-[#9aa0a6] transition-colors hover:text-white"
+                className="rounded-full p-1 text-muted-foreground transition hover:bg-accent/60 hover:text-foreground"
                 aria-label={`remove ${i + 1}`}
               >
                 ×
               </button>
             </li>
           ))}
+          {!blocks.length && (
+            <li className="rounded-md border border-dashed border-border/60 bg-background/60 px-3 py-6 text-center text-sm text-muted-foreground">
+              No blocks yet — try adding one with the composer below.
+            </li>
+          )}
         </ul>
 
-        {feedback && <div className="mt-2 text-xs opacity-70">{feedback}</div>}
+        {feedback && <div className="text-xs text-primary">{feedback}</div>}
 
         <Composer
           onSend={handleCommand}
@@ -331,9 +341,13 @@ export default function StudioPage() {
         />
       </section>
 
-      <section className="bg-[#0b0c0e] p-3">
-        <div className="h-[calc(100vh-24px)] overflow-hidden rounded-xl border border-[#1f2024] bg-black">
-          <iframe title="preview" className="h-full w-full border-0" srcDoc={doc} />
+      <section className="bg-background px-4 py-6">
+        <div className="mx-auto h-[calc(100vh-64px)] max-w-5xl overflow-hidden rounded-2xl border border-border/60 bg-card shadow-lg">
+          <iframe
+            title="preview"
+            className="h-full w-full rounded-[calc(var(--radius)-4px)] border-0"
+            srcDoc={doc}
+          />
         </div>
       </section>
     </main>
@@ -360,21 +374,28 @@ function Composer({
   }
 
   return (
-    <form onSubmit={submit} className="mt-2 flex gap-2">
-      <input
-        value={val}
-        onChange={(e) => setVal(e.target.value)}
-        disabled={disabled}
-        placeholder={placeholder}
-        className="flex-1 rounded-lg border border-[#1f2024] bg-[#0f1013] px-3 py-2.5 text-white outline-none transition-colors focus:border-[#7c3aed] disabled:cursor-not-allowed disabled:opacity-60"
-      />
-      <button
-        type="submit"
-        disabled={disabled || !val.trim()}
-        className="rounded-lg bg-[#7c3aed] px-3 py-2 font-bold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        Send
-      </button>
+    <form onSubmit={submit} className="space-y-2">
+      <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background/80 p-2 shadow-inner">
+        <input
+          value={val}
+          onChange={(e) => setVal(e.target.value)}
+          disabled={disabled}
+          placeholder={placeholder}
+          className="flex-1 rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60"
+        />
+        <Button
+          type="submit"
+          disabled={disabled || !val.trim()}
+          className="shrink-0 px-4 text-sm font-semibold"
+        >
+          Send
+        </Button>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Commands: <span className="font-medium text-foreground">add hero Welcome</span>,{' '}
+        <span className="font-medium text-foreground">add stats Label: 10</span>,{' '}
+        <span className="font-medium text-foreground">clear</span>
+      </p>
     </form>
   );
 }
