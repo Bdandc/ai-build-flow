@@ -11,7 +11,7 @@ export default function StudioPage() {
 
   const exportJSON = () => {
     const text = serialize({ blocks, edges, version: 1 });
-    download("prd-graph.json", text);
+    download("prd-graph.json", text, "application/json;charset=utf-8");
   };
 
   const importJSON = (file: File) => {
