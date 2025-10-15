@@ -1,5 +1,5 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import { cn } from '@/lib/utils';
 
 interface PopoverContextValue {
   open: boolean;
@@ -28,9 +28,15 @@ export function Popover({ open, onOpenChange, children }: PopoverProps) {
   );
 }
 
-export function PopoverTrigger({ asChild, children }: { asChild?: boolean; children: React.ReactElement; }) {
+export function PopoverTrigger({
+  asChild,
+  children,
+}: {
+  asChild?: boolean;
+  children: React.ReactElement;
+}) {
   const ctx = React.useContext(PopoverContext);
-  if (!ctx) throw new Error("Popover components must be used inside <Popover>");
+  if (!ctx) throw new Error('Popover components must be used inside <Popover>');
   const child = React.Children.only(children);
   return React.cloneElement(child, {
     onClick: (e: any) => {
@@ -40,12 +46,27 @@ export function PopoverTrigger({ asChild, children }: { asChild?: boolean; child
   });
 }
 
-export function PopoverContent({ className, children }: React.HTMLAttributes<HTMLDivElement>) {
-  const ctx = React.useContext(PopoverContext);
-  if (!ctx || !ctx.open) return null;
-  return (
-    <div className={cn("z-50 mt-2 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none", className)}>
-      {children}
-    </div>
-  );
-}
+type PopoverContentProps = React.HTMLAttributes<HTMLDivElement> & {
+  align?: 'start' | 'center' | 'end';
+};
+
+export const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentProps>(
+  ({ className, children, align = 'center', ...props }, ref) => {
+    const ctx = React.useContext(PopoverContext);
+    if (!ctx || !ctx.open) return null;
+    return (
+      <div
+        ref={ref}
+        data-align={align}
+        className={cn(
+          'z-50 mt-2 min-w-[8rem] rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none',
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  },
+);
+PopoverContent.displayName = 'PopoverContent';
