@@ -11,7 +11,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@graphprotocol/common-ts": "^1.10.0",
+    "@graphprotocol/common-ts": "~1.10.0",
     "@graphprotocol/indexer-common": "^0.24.0",
     "@graphprotocol/indexer-nats": "^0.24.0",
     "@graphprotocol/indexer-sdk": "^0.24.0",
