@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test components/prd/__tests__/PRDEditor.preview.test.mjs"
+    "lint": "next lint",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@graphprotocol/common-ts": "^1.11.0",
