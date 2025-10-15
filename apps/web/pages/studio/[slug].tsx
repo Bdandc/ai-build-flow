@@ -1,179 +1,148 @@
-import { useRouter } from "next/router";
-import React, { useMemo, useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
-
-/**
- * React Flow v11 notes:
- *  - default export is the <ReactFlow /> component
- *  - types must be imported as aliases; named Node/Edge/Connection types are not value exports
- */
-import type {
-  Node as RFNode,
-  Edge as RFEdge,
+import {
+  Background as BackgroundComponent,
+  Controls as ControlsComponent,
+  addEdge,
+  useNodesState,
+  useEdgesState,
+  type Node,
+  type Edge,
+  type ReactFlowProps,
 } from "reactflow";
-
-const ReactFlow = dynamic(() => import("reactflow").then(m => m.default), {
-  ssr: false,
-});
 import "reactflow/dist/style.css";
 
-/** Discriminated union for blocks shown on the canvas / PRD */
-export type Block =
-  | { type: "hero"; title: string }
-  | { type: "stats"; items: { label: string; value: number }[] }
-  | { type: "table"; columns: string[] };
+import FeatureNode, { FeatureNodeData } from "../../src/flow/nodes/FeatureNode";
 
-/** Type guard */
-const isBlock = (x: unknown): x is Block =>
-  !!x &&
-  typeof x === "object" &&
-  "type" in (x as any) &&
-  ["hero", "stats", "table"].includes((x as any).type);
+const ReactFlow = dynamic(
+  () => import("reactflow").then((mod) => mod.default),
+  { ssr: false }
+) as unknown as React.ComponentType<ReactFlowProps>;
+const Background = BackgroundComponent as unknown as React.ComponentType;
+const Controls = ControlsComponent as unknown as React.ComponentType;
 
-type ProjectMeta = {
-  name: string;
-  description?: string;
-};
+// ---- Node Types ----
+const nodeTypes = { feature: FeatureNode };
 
+// ---- Demo initial graph (you can replace with your real data) ----
+const initialNodes: Node<FeatureNodeData>[] = [
+  {
+    id: "f1",
+    type: "feature",
+    position: { x: 120, y: 120 },
+    data: { title: "Feature A" },
+  },
+  {
+    id: "f2",
+    type: "feature",
+    position: { x: 420, y: 180 },
+    data: { title: "Feature B" },
+  },
+];
+
+const initialEdges: Edge[] = [{ id: "e1", source: "f1", target: "f2" }];
+
+// ---- Page ----
 export default function StudioPage() {
-  const router = useRouter();
-  const { slug } = router.query as { slug?: string };
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const [meta] = useState<ProjectMeta | null>({ name: "Untitled" });
-  const [blocks] = useState<Block[]>([
-    { type: "hero", title: "Welcome" },
-    { type: "stats", items: [{ label: "Signups", value: 42 }] },
-  ]);
-
-  /** Safe summary using the discriminant */
-  const summary = (b: Block) => {
-    switch (b.type) {
-      case "stats":
-        return `stats — ${b.items.length} items`;
-      case "table":
-        return `table — ${b.columns.length} cols`;
-      case "hero":
-      default:
-        return b.type;
+  // Wire demo event listeners from the node actions
+  React.useEffect(() => {
+    function addText(event: Event) {
+      const { id, value } = (event as CustomEvent<{ id: string; value?: string }>).detail || {};
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === id
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  texts: [...(n.data.texts || []), String(value ?? "New text")],
+                },
+              }
+            : n
+        )
+      );
     }
-  };
+    function addTodo(event: Event) {
+      const { id, value } = (event as CustomEvent<{ id: string; value?: string }>).detail || {};
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === id
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  todos: [
+                    ...(n.data.todos || []),
+                    { id: crypto.randomUUID(), text: String(value ?? "New task"), done: false },
+                  ],
+                },
+              }
+            : n
+        )
+      );
+    }
+    function getHelp(event: Event) {
+      const detail = (event as CustomEvent<{ id: string }>).detail;
+      // Placeholder: open a side panel or toast
+      console.info("Get Help for node:", detail?.id);
+    }
+    function generatePRD(event: Event) {
+      const detail = (event as CustomEvent<{ id: string }>).detail;
+      // Placeholder: call API / n8n workflow to generate PRD
+      console.info("Generate PRD for node:", detail?.id);
+    }
 
-  if (!slug || meta === null) {
-    return (
-      <main style={{ padding: 24 }}>
-        <h1>Studio</h1>
-        <p>Missing slug or meta.</p>
-      <main className="p-6">
-        <p className="opacity-70">Project not found.</p>
-      </main>
-    );
-  }
+    window.addEventListener("node:addText", addText);
+    window.addEventListener("node:addTodo", addTodo);
+    window.addEventListener("node:getHelp", getHelp);
+    window.addEventListener("node:generatePRD", generatePRD);
+    return () => {
+      window.removeEventListener("node:addText", addText);
+      window.removeEventListener("node:addTodo", addTodo);
+      window.removeEventListener("node:getHelp", getHelp);
+      window.removeEventListener("node:generatePRD", generatePRD);
+    };
+  }, [setNodes]);
 
-  // Demo ReactFlow graph (kept minimal; compiles with v11)
-  const nodes: RFNode[] = useMemo(
-    () => [
-      { id: "meta", position: { x: 100, y: 80 }, data: { label: meta.name }, type: "input" },
-      ...blocks.map((b, i) => ({
-        id: `b-${i}`,
-        position: { x: 100 + i * 180, y: 240 },
-        data: { label: summary(b) },
-      })),
-    ],
-    [blocks, meta?.name],
-  );
-  const edges: RFEdge[] = useMemo(
-    () => blocks.map((_, i) => ({ id: `e-${i}`, source: "meta", target: `b-${i}` })),
-    [blocks],
-  return (
-    <main className="grid min-h-screen grid-cols-[minmax(260px,380px)_1fr]">
-      <section className="flex flex-col border-r border-[#1f2024] bg-[#0e0f10] p-3">
-        <header className="mb-[10px] flex items-center justify-between rounded-[10px] border border-[#1f2024] p-[10px]">
-          <div>
-            <div className="font-extrabold">{meta?.name || "Project"}</div>
-            <div className="text-xs opacity-60">Studio</div>
-          </div>
-          <button
-            onClick={() => setBlocks(defaultBlocks(prompt))}
-            className="cursor-pointer border-0 bg-transparent text-xs text-rose-400"
-          >
-            Reset
-          </button>
-        </header>
-
-        <ul className="grid m-0 flex-1 list-none gap-1.5 overflow-y-auto p-0">
-          {blocks.map((b: Block, i: number) => (
-            <li
-              key={i}
-              className="flex items-center justify-between rounded-lg border border-[#1f2024] bg-[#121316] px-[10px] py-2 text-sm"
-            >
-              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {i + 1}. {summarizeBlock(b)}
-              </span>
-              <button
-                onClick={() =>
-                  setBlocks((prev: Block[]) =>
-                    prev.filter((_, idx) => idx !== i)
-                  )
-                }
-                className="ml-2 cursor-pointer border-0 bg-transparent text-[#9aa0a6]"
-                aria-label={`remove ${i + 1}`}
-              >
-                ×
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        {feedback && (
-          <div className="mt-2 text-xs opacity-70">
-            {feedback}
-          </div>
-        )}
-
-        <Composer
-          onSend={handleCommand}
-          disabled={isBusy}
-          placeholder='Tell me what to add (e.g. "add stats Revenue: $1.2M; Users: 42k")'
-        />
-      </section>
-      <section className="bg-[#0b0c0e] p-3">
-        <div className="h-[calc(100vh-24px)] overflow-hidden rounded-xl border border-[#1f2024] bg-black">
-          <iframe
-            title="preview"
-            className="h-full w-full border-0"
-            srcDoc={doc}
-          />
-        </div>
-      </section>
-    </main>
+  const onConnect = React.useCallback(
+    (params: Parameters<typeof addEdge>[0]) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
   );
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>Studio: {slug}</h1>
-      <p>{meta?.description ?? "No description yet."}</p>
-      <div style={{ height: 480, border: "1px solid #eee", borderRadius: 8, marginTop: 16 }}>
-        {/* @ts-expect-error - rendered client-side only */}
-        <ReactFlow nodes={nodes} edges={edges} fitView />
-      </div>
-    </main>
-    <form onSubmit={submit} className="mt-2 flex gap-2">
-      <input
-        value={val}
-        onChange={(e) => setVal(e.target.value)}
-        disabled={disabled}
-        placeholder={placeholder}
-        className="flex-1 rounded-lg border border-[#1f2024] bg-[#0f1013] px-3 py-[10px] text-white outline-none"
-      />
-      <button
-        type="submit"
-        disabled={disabled || !val.trim()}
-        className={`rounded-lg border-0 bg-violet-600 px-3 py-[10px] font-bold text-white ${
-          disabled || !val.trim() ? "cursor-not-allowed opacity-60" : "cursor-pointer"
-        }`}
-        >
-          Send
-      </button>
-    </form>
+    <div style={{ height: "100vh" }}>
+      <ReactFlow
+        nodeTypes={nodeTypes}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        fitView
+      >
+        <Background />
+        <Controls />
+      </ReactFlow>
+    </div>
   );
+}
+
+/**
+ * ---- Build error fix helper ----
+ * If you still reference a function that labels blocks like: (b) => b.type,
+ * make sure it's safe-typed:
+ */
+export type Block =
+  | { type: "stats"; items: any[] }
+  | { type: "table"; columns: any[] }
+  | { type: string; [k: string]: any };
+
+export function safeBlockLabel(b: Block | null | undefined): string {
+  if (!b || typeof (b as any).type !== "string") return "block";
+  if (b.type === "stats") return `stats — ${(b as any).items?.length ?? 0} items`;
+  if (b.type === "table") return `table — ${(b as any).columns?.length ?? 0} cols`;
+  return String(b.type);
 }
