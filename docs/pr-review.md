@@ -9,6 +9,13 @@ I reviewed the merge history on the `work` branch to identify which pull request
 - **Keep / still relevant:** Feature, security, dependency, tooling, and mobile PRs that are directly reflected in the current codebase.
 - **Archive:** Temporary lockfile resets and conflict-resolution PRs that no longer require active follow-up.
 
+## 2025-10-16 Follow-up (newly merged PRs)
+
+- **#47 – chore(web): add useful npm scripts.** The workspace root now exposes `dev:web`, `build:web`, and `start:web` helpers that proxy into the web app, so archiving this PR would remove scripts engineers rely on for day-to-day work.【F:package.json†L7-L18】
+- **#44 – Consolidate studio around command editor.** The studio page coordinates the PRD canvas and editor through the shared store, including import/export helpers; the command-centric flow is still the default experience and should stay active.【F:apps/web/pages/studio/index.tsx†L1-L44】
+- **#43 – feat(web): add reusable + menu base UI components.** The shared UI package publishes primitives (for example the `Button`) that are used by web surfaces, and the PRD feature node depends on the reusable menu popover—archiving would orphan those live components.【F:packages/ui/src/Button.tsx†L1-L11】【F:apps/web/components/prd/FeatureNode.tsx†L1-L120】
+- **#41 – feat(web): add reusable +/- menu base UI components.** The Tailwind-based marketing/home experience and layout abstractions continue to back the logged-in shell, so this PR remains part of the active product surface.【F:apps/web/pages/index.tsx†L49-L118】【F:apps/web/components/Layout.tsx†L1-L33】
+
 ## Keep
 
 | PRs | Focus | Evidence | Recommendation |
