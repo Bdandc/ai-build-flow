@@ -9,11 +9,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             AI Build Flow
           </Link>
           <div className="flex items-center gap-4">
+            <Link href="/" className="text-sm hover:underline">
+              Studio
+            </Link>
             <Link href="/docs" className="text-sm hover:underline">
               Docs
-            </Link>
-            <Link href="/dashboard" className="text-sm hover:underline">
-              Dashboard
             </Link>
           </div>
         </nav>
