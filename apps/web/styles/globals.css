@@ -1,3 +1,115 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Optional: nicer font smoothing */
+.feature-node, .node-menu {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.feature-node {
+  position: relative;
+  width: 240px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 12px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.feature-node.is-selected {
+  outline: 2px solid #6a28ff;
+  outline-offset: 2px;
+}
+
+.feature-node .title-row {
+  display: grid;
+  grid-template-columns: 12px 1fr 24px;
+  align-items: center;
+  gap: 8px;
+}
+
+.feature-node .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #6a28ff;
+  opacity: 0.9;
+}
+
+.feature-node .title {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feature-node .plus {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fafafa;
+  cursor: pointer;
+  line-height: 22px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.feature-node .plus:hover {
+  background: #f1f1f1;
+}
+
+.node-menu {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  z-index: 50;
+}
+
+.node-menu-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5f6368;
+  margin-bottom: 8px;
+}
+
+.node-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.node-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fafafa;
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.06s ease;
+}
+
+.node-menu-item:hover {
+  background: #f2f2f2;
+  transform: translateY(-1px);
+}
+
+.node-menu-emoji {
+  font-size: 16px;
+}
+
+.node-menu-link {
+  color: #6a28ff;
+  font-weight: 600;
+}
