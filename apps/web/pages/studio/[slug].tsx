@@ -280,19 +280,19 @@ export default function StudioPage() {
 
   if (!slug || (meta === null && !prompt)) {
     return (
-      <main className="min-h-screen bg-background px-6 py-24 text-center text-muted-foreground">
-        <p className="text-sm">Project not found.</p>
+      <main className="p-6">
+        <p className="opacity-70">Project not found.</p>
       </main>
     );
   }
 
   return (
-    <main className="grid min-h-screen bg-background text-foreground lg:grid-cols-[minmax(260px,360px)_1fr]">
-      <section className="flex flex-col gap-4 border-border/60 bg-card/30 px-6 py-6 backdrop-blur lg:border-r">
-        <header className="flex items-center justify-between rounded-lg border border-border/60 bg-card/80 px-4 py-3">
+    <main className="grid min-h-screen grid-cols-[minmax(260px,380px)_1fr]">
+      <section className="flex flex-col border-r border-[#1f2024] bg-[#0e0f10] p-3">
+        <header className="mb-[10px] flex items-center justify-between rounded-[10px] border border-[#1f2024] p-[10px]">
           <div>
-            <div className="text-sm font-semibold text-muted-foreground">Studio</div>
-            <div className="text-lg font-bold text-foreground">{meta?.name || 'Project'}</div>
+            <div className="font-extrabold">{meta?.name || "Project"}</div>
+            <div className="text-xs opacity-60">Studio</div>
           </div>
           <Button
             type="button"
@@ -300,25 +300,28 @@ export default function StudioPage() {
             size="sm"
             disabled={!blocks.length}
             onClick={() => setBlocks(defaultBlocks(prompt))}
-            className="h-8 px-3 text-xs font-medium"
+            className="cursor-pointer border-0 bg-transparent text-xs text-rose-400"
           >
             Reset
           </Button>
         </header>
 
-        <ul className="flex-1 space-y-2 overflow-y-auto rounded-lg border border-border/60 bg-card/50 p-3">
+        <ul className="grid m-0 flex-1 list-none gap-1.5 overflow-y-auto p-0">
           {blocks.map((b: Block, i: number) => (
             <li
               key={i}
-              className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-background/60 px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-lg border border-[#1f2024] bg-[#121316] px-[10px] py-2 text-sm"
             >
-              <span className="truncate text-muted-foreground">
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                 {i + 1}. {summarizeBlock(b)}
               </span>
               <button
-                type="button"
-                onClick={() => setBlocks((prev: Block[]) => prev.filter((_, idx) => idx !== i))}
-                className="rounded-full p-1 text-muted-foreground transition hover:bg-accent/60 hover:text-foreground"
+                onClick={() =>
+                  setBlocks((prev: Block[]) =>
+                    prev.filter((_, idx) => idx !== i)
+                  )
+                }
+                className="ml-2 cursor-pointer border-0 bg-transparent text-[#9aa0a6]"
                 aria-label={`remove ${i + 1}`}
               >
                 ×
@@ -332,7 +335,11 @@ export default function StudioPage() {
           )}
         </ul>
 
-        {feedback && <div className="text-xs text-primary">{feedback}</div>}
+        {feedback && (
+          <div className="mt-2 text-xs opacity-70">
+            {feedback}
+          </div>
+        )}
 
         <Composer
           onSend={handleCommand}
@@ -340,12 +347,11 @@ export default function StudioPage() {
           placeholder='Tell me what to add (e.g. "add stats Revenue: $1.2M; Users: 42k")'
         />
       </section>
-
-      <section className="bg-background px-4 py-6">
-        <div className="mx-auto h-[calc(100vh-64px)] max-w-5xl overflow-hidden rounded-2xl border border-border/60 bg-card shadow-lg">
+      <section className="bg-[#0b0c0e] p-3">
+        <div className="h-[calc(100vh-24px)] overflow-hidden rounded-xl border border-[#1f2024] bg-black">
           <iframe
             title="preview"
-            className="h-full w-full rounded-[calc(var(--radius)-4px)] border-0"
+            className="h-full w-full border-0"
             srcDoc={doc}
           />
         </div>
@@ -374,28 +380,23 @@ function Composer({
   }
 
   return (
-    <form onSubmit={submit} className="space-y-2">
-      <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background/80 p-2 shadow-inner">
-        <input
-          value={val}
-          onChange={(e) => setVal(e.target.value)}
-          disabled={disabled}
-          placeholder={placeholder}
-          className="flex-1 rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60"
-        />
-        <Button
-          type="submit"
-          disabled={disabled || !val.trim()}
-          className="shrink-0 px-4 text-sm font-semibold"
+    <form onSubmit={submit} className="mt-2 flex gap-2">
+      <input
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        disabled={disabled}
+        placeholder={placeholder}
+        className="flex-1 rounded-lg border border-[#1f2024] bg-[#0f1013] px-3 py-[10px] text-white outline-none"
+      />
+      <button
+        type="submit"
+        disabled={disabled || !val.trim()}
+        className={`rounded-lg border-0 bg-violet-600 px-3 py-[10px] font-bold text-white ${
+          disabled || !val.trim() ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+        }`}
         >
           Send
-        </Button>
-      </div>
-      <p className="text-xs text-muted-foreground">
-        Commands: <span className="font-medium text-foreground">add hero Welcome</span>,{' '}
-        <span className="font-medium text-foreground">add stats Label: 10</span>,{' '}
-        <span className="font-medium text-foreground">clear</span>
-      </p>
+      </button>
     </form>
   );
 }
