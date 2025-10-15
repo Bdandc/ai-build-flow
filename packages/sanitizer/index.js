@@ -1,8 +1,7 @@
 const SCRIPT_REGEX = /<script\b[^>]*>[\s\S]*?<\/script>/gi;
 const EVENT_HANDLER_REGEX = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const QUOTED_JAVASCRIPT_URL_REGEX =
-  /((?:href|src)\s*=\s*)(["'])\s*javascript:(?:(?!\2).)*\2/gi;
-const UNQUOTED_JAVASCRIPT_URL_REGEX = /((?:href|src)\s*=\s*)javascript:[^\s>]+/gi;
+const JAVASCRIPT_URL_REGEX =
+  /((?:href|src)\s*=\s*)(?:(?<quote>["'])\s*javascript:(?:(?!\k<quote>).)*\k<quote>|javascript:[^\s>]+)/gi;
 
 /**
  * Very small sanitizer that removes script tags and dangerous inline handlers.
@@ -14,12 +13,8 @@ export function sanitizeHtml(input = "") {
   let sanitized = input.replace(SCRIPT_REGEX, "");
   sanitized = sanitized.replace(EVENT_HANDLER_REGEX, "");
   sanitized = sanitized.replace(
-    QUOTED_JAVASCRIPT_URL_REGEX,
-    (_, attr, quote) => `${attr}${quote}#${quote}`,
-  );
-  sanitized = sanitized.replace(
-    UNQUOTED_JAVASCRIPT_URL_REGEX,
-    (_, attr) => `${attr}"#"`,
+    JAVASCRIPT_URL_REGEX,
+    (_, attr, quote) => `${attr}${quote ? `${quote}#${quote}` : '"#"'}`,
   );
 
   return sanitized;
