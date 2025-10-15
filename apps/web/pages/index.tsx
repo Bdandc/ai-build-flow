@@ -132,6 +132,10 @@ function RecentProjects() {
                 Last opened {new Date(p.createdAt).toLocaleTimeString()}
               </span>
             </div>
+            <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.prompt}</p>
+            <span className="mt-4 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">
+              Last opened {new Date(p.createdAt).toLocaleTimeString()}
+            </span>
           </button>
         ))}
       </div>
