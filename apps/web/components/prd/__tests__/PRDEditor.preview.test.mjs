@@ -12,3 +12,12 @@ test('sanitizes script tags from rendered preview', () => {
   assert.ok(!sanitized.includes('alert(1)'), 'script contents should be removed');
   assert.match(sanitized, /Hello.*World/);
 });
+
+test('sanitizes unquoted javascript URLs', () => {
+  const html = '<a href=javascript:alert(1)>link</a><img src=javascript:alert(2) />';
+  const sanitized = sanitizeHtml(html);
+
+  assert.ok(!/javascript:/i.test(sanitized), 'javascript protocol should be removed');
+  assert.match(sanitized, /href="#/i, 'href should be replaced with a safe value');
+  assert.match(sanitized, /src="#/i, 'src should be replaced with a safe value');
+});
