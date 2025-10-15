@@ -1,12 +1,11 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
-
-type Project = {
-  slug: string;
-  name: string;
-  prompt: string;
-  createdAt: string;
-};
+import { useEffect, useState } from "react";
+import { defaultBlocks, StudioProjectMeta } from "@/lib/studioModel";
+import {
+  loadProjects,
+  saveProject,
+  upsertProjectMeta,
+} from "@/store/studioStore";
 
 function slugify(s: string) {
   return s
@@ -32,16 +31,15 @@ export default function Home() {
     const slugBase = slugify(name);
     const slug = slugBase + "-" + Math.random().toString(36).slice(2, 7);
 
-    const project: Project = {
+    const project: StudioProjectMeta = {
       slug,
       name,
       prompt: trimmed,
       createdAt: new Date().toISOString(),
     };
 
-    const key = "ai_build_flow_projects";
-    const existing = JSON.parse(localStorage.getItem(key) || "[]") as Project[];
-    localStorage.setItem(key, JSON.stringify([project, ...existing]));
+    upsertProjectMeta(project);
+    saveProject(slug, { prompt: trimmed, blocks: defaultBlocks(trimmed) });
 
     router.push(`/studio/${slug}`);
   }
@@ -90,10 +88,11 @@ export default function Home() {
 
 function RecentProjects() {
   const router = useRouter();
-  const projects =
-    (typeof window !== "undefined" &&
-      JSON.parse(localStorage.getItem("ai_build_flow_projects") || "[]")) ||
-    [];
+  const [projects, setProjects] = useState<StudioProjectMeta[]>([]);
+
+  useEffect(() => {
+    setProjects(loadProjects());
+  }, []);
 
   if (!projects.length) return null;
 
@@ -101,7 +100,7 @@ function RecentProjects() {
     <div className="mt-7">
       <h3 className="mb-3 opacity-80">Recent projects</h3>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3">
-        {projects.map((p: any) => (
+        {projects.map((p) => (
           <button
             key={p.slug}
             onClick={() => router.push(`/studio/${p.slug}`)}
