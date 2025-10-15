@@ -11,6 +11,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@graphprotocol/indexer-common": "^0.24.0",
     "@graphprotocol/indexer-nats": "^0.24.0",
     "@graphprotocol/indexer-sdk": "^0.24.0",
     "@heroicons/react": "^2.1.1",
