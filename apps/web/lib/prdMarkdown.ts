@@ -19,8 +19,12 @@ export function toSingleMarkdownDoc(graph: PRDGraph): string {
   return lines.join("\n");
 }
 
-export function download(filename: string, text: string) {
-  const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+export function download(
+  filename: string,
+  text: string,
+  mimeType = "text/markdown;charset=utf-8"
+) {
+  const blob = new Blob([text], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
