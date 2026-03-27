@@ -276,6 +276,7 @@ export default function StudioPage() {
         return 'block';
       }
     }
+  };
 
   if (!slug || (meta === null && !prompt)) {
     return (
